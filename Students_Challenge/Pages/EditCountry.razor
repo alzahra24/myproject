@@ -1,0 +1,49 @@
+﻿@page "/EditCountry/{Id}"
+@using Students_Challenge.Data
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h2>Edit Country</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+           
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@objcountry.name" />
+            </div>
+           
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdateCountry" value="Update" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    countries objcountry = new countries();
+    protected override async Task OnInitializedAsync()
+    {
+        objcountry = await Task.Run(() => studentService.GetCountryAsync(Convert.ToInt32(Id)));
+    }
+    protected async void UpdateCountry()
+    {
+        await studentService.UpdateCountryAsync(objcountry);
+        NavigationManager.NavigateTo("Countries");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Countries");
+    }
+}

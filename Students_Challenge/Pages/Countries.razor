@@ -1,0 +1,96 @@
+﻿@page "/Countries"
+@using Students_Challenge.Data
+@using System.Linq;
+@inject StudentService studentService
+
+
+<NavLink class="nav-link" href="AddCountry">
+    <span class="oi oi-plus" aria-hidden="true">Add New</span>
+
+</NavLink>
+
+@if (CountryObj is null)
+{
+    <p><em>Loading... !</em></p>
+}
+else
+{
+
+
+    <h1>Country Info</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Country Id</th>
+                <th>Name</th>
+                <th>Students Per Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ctry in CountryObj)
+            {
+                <tr>
+                    <td>@ctry.id</td>
+                    <td>@ctry.name</td>
+                    <td>
+                        @{
+                            var returnSperC = @GetStudPerCount(ctry.id);
+                            <span>@returnSperC</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="nav-link" href="EditCountry/@ctry.id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="DeleteCountry/@ctry.id">
+                            <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+
+    private int countc = 0;
+
+    
+    countries objcountry = new countries();
+    List<Student> EmpObj;
+   
+    List<countries> CountryObj;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EmpObj = await Task.Run(() => studentService.GetAllStudentsAsync());
+      
+        CountryObj = await Task.Run(() => studentService.GetAllCountriesAsync());
+       
+    }
+
+
+
+
+
+    public int GetStudPerCount(int countryid)
+    {
+       
+            countc = 0;
+            @foreach (var c in EmpObj)
+            {
+                if (countryid == c.country_id)
+                {
+
+                    countc++;
+
+                }
+            }
+
+       
+        return countc;
+    }
+   
+}

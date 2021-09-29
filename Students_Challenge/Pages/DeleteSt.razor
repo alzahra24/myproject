@@ -1,0 +1,62 @@
+﻿@page "/DeleteSt/{Id}"
+@using Students_Challenge.Data
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h2>Delete Student</h2>
+<hr />
+<h3>Are you sure want to delete this?</h3>
+<form>
+    <div class="row">
+        <div class=" col-md-8">
+            <div class="form-group">
+                <label>Student Id:</label>
+                <label>@obj.id</label>
+            </div>
+            <div class="form-group">
+                <label>Student Name:</label>
+                <label>@obj.name</label>
+            </div>
+            <div class="form-group">
+                <label>Class ID:</label>
+                <label>@obj.class_id</label>
+            </div>
+            <div class="form-group">
+                <label>Country ID:</label>
+                <label>@obj.country_id</label>
+            </div>
+            <div class="form-group">
+                <label>Birth Date:</label>
+                <label>@obj.date_of_birth.ToShortDateString()</label>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-danger" @onclick="@DeleteStudent" value="Delete" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    Student obj = new Student();
+    protected override async Task OnInitializedAsync()
+    {
+        obj = await Task.Run(() => studentService.GetStudentAsync(Convert.ToInt32(Id)));
+    }
+    protected async void DeleteStudent()
+    {
+        await studentService.DeleteStudentAsync(obj);
+        NavigationManager.NavigateTo("Students");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Students");
+    }
+}

@@ -1,0 +1,141 @@
+﻿@page "/Students"
+@using Students_Challenge.Data
+@using System.Linq;
+@inject StudentService studentService
+
+<NavLink class="nav-link" href="AddStudent">
+    <span class="oi oi-plus" aria-hidden="true">Add New</span>
+
+</NavLink>
+
+<h1>Student Info</h1>
+@if (EmpObj is null)
+{
+    <p><em>Loading... !</em></p>
+}
+else
+{
+<h4>
+    <button @onclick="avgAges">Click</button>
+    @avrage is Average Age of Students
+</h4>
+    
+    
+    <table class="table">
+        <thead>
+
+            <tr>
+                <th>Student Id</th>
+                <th>Name</th>
+                <th>Class ID</th>
+                <th>Country ID</th>
+                <th>Birth Date</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var stu in EmpObj)
+            {
+
+                <tr>
+                    <td>@stu.id</td>
+                    <td>@stu.name</td>
+                    <td>
+                        @{
+                            var returnclass = @GetClassName(stu.class_id);
+                            <span>@returnclass.ToString()</span>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var returncountry = @GetCountryName(stu.country_id);
+                            <span>@returncountry.ToString()</span>
+                        }
+                    </td>
+                    <td>@stu.date_of_birth.ToShortDateString()</td>
+                    <!-- <td>
+                         @{
+                             var returnage = avgAges(stu.date_of_birth);
+                             <span>@returnage.ToString()</span>
+                         }
+                     </td>-->
+                    <td>
+                        <a class="nav-link" href="EditStudent/@stu.id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="DeleteSt/@stu.id">
+                            <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+
+
+}
+
+
+@code {
+
+    List<Student> EmpObj;
+    List<classes> ClassObj;
+    List<countries> CountryObj;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EmpObj = await Task.Run(() => studentService.GetAllStudentsAsync());
+        ClassObj = await Task.Run(() => studentService.GetAllClassesAsync());
+        CountryObj = await Task.Run(() => studentService.GetAllCountriesAsync());
+
+    }
+
+    public string GetClassName(int class_id)
+    {
+
+        return ClassObj[class_id - 1].name;
+    }
+
+    public string GetCountryName(int country_id)
+    {
+
+        return CountryObj[country_id - 1].name;
+    }
+
+
+
+    int age = 0;
+    int Sumofage = 0;
+    int avrage = 0;
+    
+    // public int avgAges(DateTime dob)
+    private void avgAges()
+
+    {
+
+        @foreach (var stu in EmpObj)
+        {
+            DateTime now = DateTime.Today;
+            age = now.Year - stu.date_of_birth.Year;
+            if (now > stu.date_of_birth.AddYears(age))
+            {
+                
+                Sumofage = Sumofage + age;
+
+
+                age--;
+
+            }
+
+        }
+
+        avrage = Sumofage / EmpObj.Count;
+        //return avrage;
+
+    }
+
+
+
+
+}

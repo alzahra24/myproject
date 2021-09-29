@@ -1,0 +1,46 @@
+﻿@page "/AddCountry"
+@using Students_Challenge.Data
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h2>Add Country</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@objCountry.name" />
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateCountry" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    countries objCountry = new countries();
+
+
+    protected async void CreateCountry()
+    {
+        await studentService.InsertCountryAsync(objCountry);
+        NavigationManager.NavigateTo("Countries");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Countries");
+    }
+
+
+
+}

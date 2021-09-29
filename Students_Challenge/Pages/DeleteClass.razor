@@ -1,0 +1,53 @@
+﻿@page "/DeleteClass/{Id}"
+@using Students_Challenge.Data
+@inject StudentService studentService
+
+@inject NavigationManager NavigationManager
+
+
+<h2>Delete Class</h2>
+<hr />
+<h3>Are you sure want to delete this?</h3>
+<form>
+    <div class="row">
+        <div class=" col-md-8">
+            <div class="form-group">
+                <label>Class Id:</label>
+                <label>@objClass.id</label>
+            </div>
+            <div class="form-group">
+                <label>Class Name:</label>
+                <label>@objClass.name</label>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-danger" @onclick="@DeleteClasses" value="Delete" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    classes objClass = new classes();
+    protected override async Task OnInitializedAsync()
+    {
+        objClass = await Task.Run(() => studentService.GetClassAsync(Convert.ToInt32(Id)));
+    }
+    protected async void DeleteClasses()
+    {
+        await studentService.DeleteClassAsync(objClass);
+        NavigationManager.NavigateTo("Classes");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Classes");
+    }
+}

@@ -1,0 +1,46 @@
+﻿@page "/AddClass"
+@using Students_Challenge.Data
+@inject StudentService studentService
+@inject NavigationManager NavigationManager
+
+<h2>Add Class</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@objClasses.name" />
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateClass" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    classes objClasses = new classes();
+
+
+    protected async void CreateClass()
+    {
+        await studentService.InsertClassAsync(objClasses);
+        NavigationManager.NavigateTo("Classes");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Classes");
+    }
+
+
+
+}

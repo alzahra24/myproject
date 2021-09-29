@@ -1,0 +1,98 @@
+﻿@page "/Classes"
+@using Students_Challenge.Data
+@using System.Linq;
+@inject StudentService studentService
+
+
+
+<NavLink class="nav-link" href="AddClass">
+    <span class="oi oi-plus" aria-hidden="true">Add New</span>
+
+</NavLink>
+@if (ClassObj is null)
+{
+    <p><em>Loading... !</em></p>
+}
+else
+{
+
+    <h1>Class Info</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Class Id</th>
+                <th>Name</th>
+                <th>Students Per Class</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var cls in ClassObj)
+            {
+                <tr>
+                    <td>@cls.id</td>
+                    <td>@cls.name</td>
+                    <td>
+
+                        @{
+                            var returnSPerClass = @GetStudPerCla(cls.id);
+                            <span>@returnSPerClass</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="nav-link" href="EditClass/@cls.id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="DeleteClass/@cls.id">
+                            <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+}
+
+
+@code {
+    private int count = 0;
+    
+    classes objclass = new classes();
+    
+    List<Student> EmpObj;
+    List<classes> ClassObj;
+  
+
+    protected override async Task OnInitializedAsync()
+    {
+        EmpObj = await Task.Run(() => studentService.GetAllStudentsAsync());
+        ClassObj = await Task.Run(() => studentService.GetAllClassesAsync());
+       
+    }
+
+
+
+    public int GetStudPerCla(int classid)
+
+    {
+      
+             count = 0;
+            @foreach (var cla in EmpObj)
+            {
+
+                if (cla.class_id == classid)
+                {
+                    count++;
+                }
+            }
+
+       
+        return count;
+        
+    }
+
+
+
+}
